@@ -149,7 +149,8 @@ class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Audio2Note")
-        self.resize(1100, 720)
+        self.resize(1180, 740)
+        self.setMinimumSize(1180, 740)
 
         self.download_dir: Optional[str] = None
         self.last_session_path: Optional[str] = None
@@ -330,12 +331,14 @@ class MainWindow(QMainWindow):
         self.start_btn = QPushButton("开始下载")
         self.start_btn.setProperty("kind", "primary")
         self.start_btn.clicked.connect(self._handle_download)
+        self.start_btn.setMinimumHeight(46)
         actions.addWidget(self.start_btn, stretch=1)
 
         self.open_dir_btn = QPushButton("打开保存目录")
         self.open_dir_btn.setEnabled(False)
         self.open_dir_btn.setProperty("kind", "secondary")
         self.open_dir_btn.clicked.connect(self._open_last_session)
+        self.open_dir_btn.setMinimumHeight(46)
         actions.addWidget(self.open_dir_btn, stretch=1)
 
         controls_layout.addLayout(actions)
@@ -475,6 +478,7 @@ class MainWindow(QMainWindow):
         self.transcribe_start_btn.setProperty("kind", "primary")
         self.transcribe_start_btn.setEnabled(False)
         self.transcribe_start_btn.clicked.connect(self._handle_transcription)
+        self.transcribe_start_btn.setMinimumHeight(44)
         transcribe_actions.addWidget(self.transcribe_start_btn, stretch=1)
 
         settings_layout.addLayout(transcribe_actions)
@@ -522,12 +526,14 @@ class MainWindow(QMainWindow):
         self.transcribe_push_btn.setProperty("kind", "secondary")
         self.transcribe_push_btn.setEnabled(False)
         self.transcribe_push_btn.clicked.connect(self._push_transcript_to_chat)
+        self.transcribe_push_btn.setMinimumHeight(42)
         save_actions.addWidget(self.transcribe_push_btn)
 
         self.transcribe_save_btn = QPushButton("保存为 TXT")
         self.transcribe_save_btn.setProperty("kind", "secondary")
         self.transcribe_save_btn.setEnabled(False)
         self.transcribe_save_btn.clicked.connect(self._save_transcription)
+        self.transcribe_save_btn.setMinimumHeight(42)
         save_actions.addWidget(self.transcribe_save_btn)
         result_layout.addLayout(save_actions)
         result_layout.addStretch(1)
@@ -599,6 +605,17 @@ class MainWindow(QMainWindow):
         connect_btn.clicked.connect(self._save_chat_credentials)
         config_layout.addWidget(connect_btn)
 
+        instruction_label = QLabel("批处理指令")
+        instruction_label.setObjectName("fieldLabel")
+        config_layout.addWidget(instruction_label)
+
+        self.chat_instruction_input = QTextEdit()
+        self.chat_instruction_input.setObjectName("chatInput")
+        self.chat_instruction_input.setPlaceholderText("示例：请将以下文本总结为结构化的 Markdown 笔记，突出重点和待办事项。")
+        self.chat_instruction_input.setFixedHeight(110)
+        self.chat_instruction_input.setPlainText("请将以下内容总结为结构化的 Markdown 笔记，其中包含关键信息、要点列表以及可执行的待办项。")
+        config_layout.addWidget(self.chat_instruction_input)
+
         config_layout.addWidget(self._create_divider())
 
         recent_label = QLabel("提示：API Key 将缓存在本地，仅在当前设备使用。")
@@ -623,17 +640,6 @@ class MainWindow(QMainWindow):
         self.chat_history_view.setMinimumHeight(280)
         chat_layout.addWidget(self.chat_history_view, stretch=1)
 
-        instruction_label = QLabel("批处理指令")
-        instruction_label.setObjectName("fieldLabel")
-        chat_layout.addWidget(instruction_label)
-
-        self.chat_instruction_input = QTextEdit()
-        self.chat_instruction_input.setObjectName("chatInput")
-        self.chat_instruction_input.setPlaceholderText("示例：请将以下文本总结为结构化的 Markdown 笔记，突出重点和待办事项。")
-        self.chat_instruction_input.setFixedHeight(110)
-        self.chat_instruction_input.setPlainText("请将以下内容总结为结构化的 Markdown 笔记，其中包含关键信息、要点列表以及可执行的待办项。")
-        chat_layout.addWidget(self.chat_instruction_input)
-
         batch_actions = QHBoxLayout()
         batch_actions.setSpacing(12)
         batch_actions.addStretch()
@@ -641,12 +647,14 @@ class MainWindow(QMainWindow):
         self.chat_run_batch_btn = QPushButton("处理转写文本")
         self.chat_run_batch_btn.setProperty("kind", "secondary")
         self.chat_run_batch_btn.clicked.connect(self._run_transcript_batch)
+        self.chat_run_batch_btn.setMinimumHeight(40)
         batch_actions.addWidget(self.chat_run_batch_btn)
 
         self.chat_download_btn = QPushButton("下载 Markdown")
         self.chat_download_btn.setProperty("kind", "secondary")
         self.chat_download_btn.setEnabled(False)
         self.chat_download_btn.clicked.connect(self._download_chat_markdown)
+        self.chat_download_btn.setMinimumHeight(40)
         batch_actions.addWidget(self.chat_download_btn)
 
         chat_layout.addLayout(batch_actions)
@@ -664,6 +672,7 @@ class MainWindow(QMainWindow):
         self.chat_send_btn = QPushButton("发送")
         self.chat_send_btn.setProperty("kind", "primary")
         self.chat_send_btn.clicked.connect(self._handle_chat_send)
+        self.chat_send_btn.setMinimumHeight(42)
         chat_actions.addWidget(self.chat_send_btn)
 
         chat_layout.addLayout(chat_actions)
@@ -796,28 +805,29 @@ class MainWindow(QMainWindow):
                 padding: 12px 16px;
                 font-weight: 600;
                 border: 1px solid transparent;
+                font-size: 15px;
             }
             QPushButton[kind="primary"] {
-                background-color: #3b82f6;
+                background-color: #2563eb;
                 color: #ffffff;
             }
             QPushButton[kind="primary"]:hover {
-                background-color: #2563eb;
+                background-color: #1d4ed8;
             }
             QPushButton[kind="primary"]:disabled {
-                background-color: rgba(59, 130, 246, 0.35);
+                background-color: rgba(37, 99, 235, 0.35);
                 color: rgba(255, 255, 255, 0.7);
             }
             QPushButton[kind="secondary"] {
-                background-color: #e0e7ff;
-                color: #1d4ed8;
-                border: 1px solid rgba(99, 102, 241, 0.35);
+                background-color: #f1f5ff;
+                color: #1f2937;
+                border: 1px solid rgba(99, 102, 241, 0.45);
             }
             QPushButton[kind="secondary"]:hover {
-                background-color: #c7d2fe;
+                background-color: #dbeafe;
             }
             QPushButton[kind="secondary"]:disabled {
-                color: rgba(29, 78, 216, 0.45);
+                color: rgba(15, 23, 42, 0.45);
                 background-color: rgba(224, 231, 255, 0.7);
             }
             QPushButton[kind="secondary"]:focus,
